@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Puzzle para Cande 💖</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #ffe6f0;
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      color: #d63384;
+    }
+    #puzzle {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 2px;
+      margin-top: 20px;
+    }
+    .piece {
+      width: 100px;
+      height: 100px;
+      background-size: 300px 300px;
+      cursor: grab;
+      border-radius: 4px;
+    }
+    #message {
+      margin-top: 25px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #c2185b;
+      text-align: center;
+      max-width: 400px;
+      line-height: 1.4em;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Puzzle para mi amor 💕</h1>
+  <div id="puzzle"></div>
+  <div id="message">
+    No hay nada que cambiaría de ti, porque para mí eres la mujer más hermosa del mundo.  
+    Para mí, eres mi obra de arte favorita 💖
+  </div>
+
+  <script>
+    const puzzle = document.getElementById("puzzle");
+    const message = document.getElementById("message");
+
+    const img = "nosotras.jpg"; 
+    // 👉 Troca este link pela foto que queres usar (300x300 recomendado)
+
+    const pieces = [];
+    for (let i = 0; i < 9; i++) {
+      const piece = document.createElement("div");
+      piece.classList.add("piece");
+      piece.style.backgroundImage = `url(${img})`;
+      const x = (i % 3) * -100;
+      const y = Math.floor(i / 3) * -100;
+      piece.style.backgroundPosition = `${x}px ${y}px`;
+      piece.setAttribute("data-index", i);
+      pieces.push(piece);
+    }
+
+    // embaralhar peças
+    pieces.sort(() => Math.random() - 0.5);
+    pieces.forEach(piece => puzzle.appendChild(piece));
+
+    let dragged;
+    puzzle.addEventListener("dragstart", e => {
+      dragged = e.target;
+    });
+    puzzle.addEventListener("dragover", e => {
+      e.preventDefault();
+    });
+    puzzle.addEventListener("drop", e => {
+      if (e.target.classList.contains("piece")) {
+        const temp = document.createElement("div");
+        puzzle.replaceChild(temp, dragged);
+        puzzle.replaceChild(dragged, e.target);
+        puzzle.replaceChild(e.target, temp);
+
+        checkWin();
+      }
+    });
+
+    function checkWin() {
+      const current = [...puzzle.children];
+      const isComplete = current.every(
+        (piece, i) => piece.getAttribute("data-index") == i
+      );
+      if (isComplete) {
+        message.style.display = "block";
+      }
+    }
+
+    // tornar peças arrastáveis
+    document.querySelectorAll(".piece").forEach(piece => {
+      piece.setAttribute("draggable", true);
+    });
+  </script>
+</body>
+</html>
